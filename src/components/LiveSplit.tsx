@@ -11,6 +11,7 @@ import { Component as CurrentPaceComponent } from "./CurrentPace";
 import { Component as DeltaComponent } from "./Delta";
 import { Component as CurrentComparisonComponent } from "./CurrentComparison";
 import { Component as GraphComponent } from "./Graph";
+import { Component as AnalogClockComponent } from "./AnalogClock";
 import { RunEditor as RunEditorComponent } from "./RunEditor";
 import Sidebar from "react-sidebar";
 
@@ -390,7 +391,8 @@ export class LiveSplit extends React.Component<Props, State> {
                                 <div className="livesplit">
                                     <TitleComponent timer={this.state.timer} />
                                     <SplitsComponent timer={this.state.timer} />
-                                    <TimerComponent timer={this.state.timer} />
+                                    <AnalogClockComponent timer={this.state.timer} />
+                                    {/*<TimerComponent timer={this.state.timer} />*/}
                                     <PreviousSegmentComponent timer={this.state.timer} />
                                     <SumOfBestComponent timer={this.state.timer} />
                                     <PossibleTimeSaveComponent timer={this.state.timer} />

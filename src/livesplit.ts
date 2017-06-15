@@ -67,7 +67,7 @@ export interface GraphComponentStateJson {
 
 export type TextComponentStateJson =
 	{ Center: String } |
-	{ Split: String[2] };
+	{ Split: String[] };
 
 export interface TotalPlaytimeComponentStateJson {
     text: string;
@@ -88,6 +88,12 @@ export interface DeltaComponentStateJson {
 export interface CurrentComparisonComponentStateJson {
     text: string;
     comparison: string;
+}
+
+export interface AnalogClockComponentStateJson {
+    seconds: number[];
+    minutes: number[];
+    hours: number[];
 }
 
 export interface RunEditorStateJson {
@@ -128,6 +134,17 @@ export type Color = "Default" |
     "Paused" |
     "PersonalBest";
 
+liveSplitCoreNative.AnalogClockComponent_new = emscriptenModule.cwrap('AnalogClockComponent_new', "number", []);
+liveSplitCoreNative.AnalogClockComponent_drop = emscriptenModule.cwrap('AnalogClockComponent_drop', null, ["number"]);
+liveSplitCoreNative.AnalogClockComponent_state_as_json = emscriptenModule.cwrap('AnalogClockComponent_state_as_json', "string", ["number", "number"]);
+liveSplitCoreNative.AnalogClockComponent_state = emscriptenModule.cwrap('AnalogClockComponent_state', "number", ["number", "number"]);
+liveSplitCoreNative.AnalogClockComponentState_drop = emscriptenModule.cwrap('AnalogClockComponentState_drop', null, ["number"]);
+liveSplitCoreNative.AnalogClockComponentState_seconds_x = emscriptenModule.cwrap('AnalogClockComponentState_seconds_x', "number", ["number"]);
+liveSplitCoreNative.AnalogClockComponentState_seconds_y = emscriptenModule.cwrap('AnalogClockComponentState_seconds_y', "number", ["number"]);
+liveSplitCoreNative.AnalogClockComponentState_minutes_x = emscriptenModule.cwrap('AnalogClockComponentState_minutes_x', "number", ["number"]);
+liveSplitCoreNative.AnalogClockComponentState_minutes_y = emscriptenModule.cwrap('AnalogClockComponentState_minutes_y', "number", ["number"]);
+liveSplitCoreNative.AnalogClockComponentState_hours_x = emscriptenModule.cwrap('AnalogClockComponentState_hours_x', "number", ["number"]);
+liveSplitCoreNative.AnalogClockComponentState_hours_y = emscriptenModule.cwrap('AnalogClockComponentState_hours_y', "number", ["number"]);
 liveSplitCoreNative.AtomicDateTime_drop = emscriptenModule.cwrap('AtomicDateTime_drop', null, ["number"]);
 liveSplitCoreNative.AtomicDateTime_is_synchronized = emscriptenModule.cwrap('AtomicDateTime_is_synchronized', "number", ["number"]);
 liveSplitCoreNative.AtomicDateTime_to_rfc2822 = emscriptenModule.cwrap('AtomicDateTime_to_rfc2822', "string", ["number"]);
@@ -362,6 +379,130 @@ liveSplitCoreNative.TotalPlaytimeComponent_state = emscriptenModule.cwrap('Total
 liveSplitCoreNative.TotalPlaytimeComponentState_drop = emscriptenModule.cwrap('TotalPlaytimeComponentState_drop', null, ["number"]);
 liveSplitCoreNative.TotalPlaytimeComponentState_text = emscriptenModule.cwrap('TotalPlaytimeComponentState_text', "string", ["number"]);
 liveSplitCoreNative.TotalPlaytimeComponentState_time = emscriptenModule.cwrap('TotalPlaytimeComponentState_time', "string", ["number"]);
+
+export class AnalogClockComponentRef {
+    ptr: number;
+    stateAsJson(timer: TimerRef): any {
+        if (this.ptr == 0) {
+            throw "this is disposed";
+        }
+        if (timer.ptr == 0) {
+            throw "timer is disposed";
+        }
+        var result = liveSplitCoreNative.AnalogClockComponent_state_as_json(this.ptr, timer.ptr);
+        return JSON.parse(result);
+    }
+    state(timer: TimerRef): AnalogClockComponentState {
+        if (this.ptr == 0) {
+            throw "this is disposed";
+        }
+        if (timer.ptr == 0) {
+            throw "timer is disposed";
+        }
+        var result = new AnalogClockComponentState(liveSplitCoreNative.AnalogClockComponent_state(this.ptr, timer.ptr));
+        if (result.ptr == 0) {
+            return null;
+        }
+        return result;
+    }
+    constructor(ptr: number) {
+        this.ptr = ptr;
+    }
+}
+
+export class AnalogClockComponentRefMut extends AnalogClockComponentRef {
+}
+
+export class AnalogClockComponent extends AnalogClockComponentRefMut {
+    with(closure: (obj: AnalogClockComponent) => void) {
+        try {
+            closure(this);
+        } finally {
+            this.dispose();
+        }
+    }
+    dispose() {
+        if (this.ptr != 0) {
+            liveSplitCoreNative.AnalogClockComponent_drop(this.ptr);
+            this.ptr = 0;
+        }
+    }
+    static new(): AnalogClockComponent {
+        var result = new AnalogClockComponent(liveSplitCoreNative.AnalogClockComponent_new());
+        if (result.ptr == 0) {
+            return null;
+        }
+        return result;
+    }
+}
+
+export class AnalogClockComponentStateRef {
+    ptr: number;
+    secondsX(): number {
+        if (this.ptr == 0) {
+            throw "this is disposed";
+        }
+        var result = liveSplitCoreNative.AnalogClockComponentState_seconds_x(this.ptr);
+        return result;
+    }
+    secondsY(): number {
+        if (this.ptr == 0) {
+            throw "this is disposed";
+        }
+        var result = liveSplitCoreNative.AnalogClockComponentState_seconds_y(this.ptr);
+        return result;
+    }
+    minutesX(): number {
+        if (this.ptr == 0) {
+            throw "this is disposed";
+        }
+        var result = liveSplitCoreNative.AnalogClockComponentState_minutes_x(this.ptr);
+        return result;
+    }
+    minutesY(): number {
+        if (this.ptr == 0) {
+            throw "this is disposed";
+        }
+        var result = liveSplitCoreNative.AnalogClockComponentState_minutes_y(this.ptr);
+        return result;
+    }
+    hoursX(): number {
+        if (this.ptr == 0) {
+            throw "this is disposed";
+        }
+        var result = liveSplitCoreNative.AnalogClockComponentState_hours_x(this.ptr);
+        return result;
+    }
+    hoursY(): number {
+        if (this.ptr == 0) {
+            throw "this is disposed";
+        }
+        var result = liveSplitCoreNative.AnalogClockComponentState_hours_y(this.ptr);
+        return result;
+    }
+    constructor(ptr: number) {
+        this.ptr = ptr;
+    }
+}
+
+export class AnalogClockComponentStateRefMut extends AnalogClockComponentStateRef {
+}
+
+export class AnalogClockComponentState extends AnalogClockComponentStateRefMut {
+    with(closure: (obj: AnalogClockComponentState) => void) {
+        try {
+            closure(this);
+        } finally {
+            this.dispose();
+        }
+    }
+    dispose() {
+        if (this.ptr != 0) {
+            liveSplitCoreNative.AnalogClockComponentState_drop(this.ptr);
+            this.ptr = 0;
+        }
+    }
+}
 
 export class AtomicDateTimeRef {
     ptr: number;
