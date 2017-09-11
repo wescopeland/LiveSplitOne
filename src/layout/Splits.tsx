@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as LiveSplit from "../livesplit";
+import { Image } from "../util/Image";
 import Split from "./Split";
 
 export interface Props {
@@ -8,19 +9,25 @@ export interface Props {
 }
 
 export default class Splits extends React.Component<Props> {
-    private iconUrls: string[];
+    private icons: Image[];
 
     constructor(props: Props) {
         super(props);
-        this.iconUrls = [];
+        this.icons = [];
+    }
+
+    public componentWillUnmount() {
+        for (const iconUrl of this.icons) {
+            iconUrl.dispose();
+        }
     }
 
     public render() {
         for (const iconChange of this.props.state.icon_changes) {
-            while (iconChange.segment_index >= this.iconUrls.length) {
-                this.iconUrls.push("");
+            while (iconChange.segment_index >= this.icons.length) {
+                this.icons.push(new Image());
             }
-            this.iconUrls[iconChange.segment_index] = iconChange.icon;
+            this.icons[iconChange.segment_index].possiblyModify(iconChange.icon);
         }
 
         return (
@@ -31,7 +38,7 @@ export default class Splits extends React.Component<Props> {
                             split={s}
                             splitsState={this.props.state}
                             layoutState={this.props.layoutState}
-                            icon={this.iconUrls[s.index]}
+                            icon={this.icons[s.index].url}
                             key={s.index.toString()}
                             separatorInFrontOfSplit={
                                 this.props.state.show_final_separator &&

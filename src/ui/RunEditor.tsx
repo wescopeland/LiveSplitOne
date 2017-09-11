@@ -2,6 +2,7 @@ import * as React from "react";
 import { ContextMenu, ContextMenuTrigger, MenuItem } from "react-contextmenu";
 import * as LiveSplit from "../livesplit";
 import { openFileAsArrayBuffer } from "../util/FileUtil";
+import { Image } from "../util/Image";
 import { TextBox } from "./TextBox";
 
 export interface Props { editor: LiveSplit.RunEditor }
@@ -21,8 +22,8 @@ interface RowState {
 }
 
 export class RunEditor extends React.Component<Props, State> {
-    private gameIcon: string;
-    private segmentIconUrls: string[];
+    private gameIcon: Image;
+    private segmentIcons: Image[];
 
     constructor(props: Props) {
         super(props);
@@ -40,8 +41,15 @@ export class RunEditor extends React.Component<Props, State> {
             },
         };
 
-        this.gameIcon = "";
-        this.segmentIconUrls = [];
+        this.gameIcon = new Image();
+        this.segmentIcons = [];
+    }
+
+    public componentWillUnmount() {
+        this.gameIcon.dispose();
+        for (const segmentIcon of this.segmentIcons) {
+            segmentIcon.dispose();
+        }
     }
 
     public render() {
@@ -539,14 +547,12 @@ export class RunEditor extends React.Component<Props, State> {
     }
 
     private getSegmentIconUrl(index: number): string {
-        while (index >= this.segmentIconUrls.length) {
-            this.segmentIconUrls.push("");
+        while (index >= this.segmentIcons.length) {
+            this.segmentIcons.push(new Image());
         }
         const iconChange = this.state.editor.segments[index].icon_change;
-        if (iconChange != null) {
-            this.segmentIconUrls[index] = iconChange;
-        }
-        return this.segmentIconUrls[index];
+        this.segmentIcons[index].possiblyModify(iconChange);
+        return this.segmentIcons[index].url;
     }
 
     private changeGameIcon() {
@@ -562,10 +568,8 @@ export class RunEditor extends React.Component<Props, State> {
     }
 
     private getGameIcon(): string {
-        if (this.state.editor.icon_change != null) {
-            this.gameIcon = this.state.editor.icon_change;
-        }
-        return this.gameIcon;
+        this.gameIcon.possiblyModify(this.state.editor.icon_change);
+        return this.gameIcon.url;
     }
 
     private update() {

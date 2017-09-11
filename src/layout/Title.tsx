@@ -1,16 +1,20 @@
 import * as React from "react";
 import * as LiveSplit from "../livesplit";
 import { gradientToCss } from "../util/ColorUtil";
+import { Image } from "../util/Image";
 
 export interface Props { state: LiveSplit.TitleComponentStateJson }
 
 export default class Title extends React.Component<Props> {
-    private iconUrl: string;
+    private icon: Image;
 
     constructor(props: Props) {
         super(props);
+        this.icon = new Image();
+    }
 
-        this.iconUrl = "";
+    public componentWillUnmount() {
+        this.icon.dispose();
     }
 
     public render() {
@@ -56,9 +60,7 @@ export default class Title extends React.Component<Props> {
     }
 
     private getIconUrl(): string {
-        if (this.props.state.icon_change != null) {
-            this.iconUrl = this.props.state.icon_change;
-        }
-        return this.iconUrl;
+        this.icon.possiblyModify(this.props.state.icon_change);
+        return this.icon.url;
     }
 }
